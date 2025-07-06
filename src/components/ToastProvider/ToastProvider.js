@@ -1,9 +1,16 @@
 import React from "react";
+import useEscapeKey from "../../hooks/useEscapeKey";
 
 export const ToastContext = React.createContext();
 
 function ToastProvider({ children }) {
   const [toasts, setToasts] = React.useState([]);
+
+  const handleEscape = React.useCallback(() => {
+    setToasts([]);
+  }, []);
+
+  useEscapeKey(handleEscape);
 
   function createToast({ message, variant }) {
     setToasts((current) => [
@@ -17,20 +24,6 @@ function ToastProvider({ children }) {
       current.filter((toast) => toast.id !== id)
     );
   }
-
-  React.useEffect(() => {
-    function handleKeyUp(event) {
-      if (event.code === "Escape") {
-        setToasts([]);
-      }
-    }
-
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
 
   const memoizedValue = React.useMemo(
     () => ({ toasts, createToast, dismissToast }),
