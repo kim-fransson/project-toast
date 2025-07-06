@@ -18,6 +18,20 @@ function ToastProvider({ children }) {
     );
   }
 
+  React.useEffect(() => {
+    function handleKeyUp(event) {
+      if (event.code === "Escape") {
+        setToasts([]);
+      }
+    }
+
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
   const memoizedValue = React.useMemo(
     () => ({ toasts, createToast, dismissToast }),
     [toasts]
